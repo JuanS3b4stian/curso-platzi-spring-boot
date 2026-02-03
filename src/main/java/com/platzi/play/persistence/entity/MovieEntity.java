@@ -1,5 +1,6 @@
 package com.platzi.play.persistence.entity;
 
+import com.platzi.play.domain.Gender;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

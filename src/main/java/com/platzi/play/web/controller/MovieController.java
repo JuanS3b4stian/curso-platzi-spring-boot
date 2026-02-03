@@ -2,10 +2,9 @@ package com.platzi.play.web.controller;
 
 import com.platzi.play.domain.dto.MovieDTO;
 import com.platzi.play.domain.service.MovieService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,12 +20,26 @@ public class MovieController {
 
     // Este método NO necesita ("/..") ya que usa el de @RequestMapping("/movies")
     @GetMapping
-    public List<MovieDTO> getAll(){
-        return this.movieService.getAll();
+    // Devuelve un ResponseEntity, el cual tiene como parámetro una lista de MovieDTO
+    public ResponseEntity<List<MovieDTO>> getAll(){
+        return ResponseEntity.ok(this.movieService.getAll());
     }
 
     @GetMapping("/{id}")
-    public MovieDTO getById(@PathVariable long id){
-        return this.movieService.getById(id); // Controlador llama al Service
+    // Clase importada ResponseEntity para generar códigos HTTP y personalizar estos mismos.
+    public ResponseEntity<MovieDTO> getById(@PathVariable long id){
+        MovieDTO movieDto = this.movieService.getById(id);
+
+        if (movieDto == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(movieDto);
+    }
+
+    @PostMapping
+    public ResponseEntity<MovieDTO> add(@RequestBody MovieDTO movieDto){
+        MovieDTO movieDtoResponse = this.movieService.add(movieDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(movieDtoResponse);
     }
 }

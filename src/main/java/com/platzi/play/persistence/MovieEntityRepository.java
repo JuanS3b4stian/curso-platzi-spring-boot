@@ -24,12 +24,20 @@ public class MovieEntityRepository implements MovieRepository {
 
     @Override
     public List<MovieDTO> getAll(){
-        return this.movieMapper.toDTO(this.crudMovieEntity.findAll());
+        return this.movieMapper.toDto(this.crudMovieEntity.findAll());
     }
 
     @Override
     public MovieDTO getById(long id){
         MovieEntity movieEntity = this.crudMovieEntity.findById(id).orElse(null);
-        return this.movieMapper.toDTO(movieEntity); // Mapear para retornar un DTO y no un MovieEntity
+        return this.movieMapper.toDto(movieEntity); // Mapear para retornar un DTO y no un MovieEntity
+    }
+
+    @Override
+    public MovieDTO save(MovieDTO movieDto) {
+        MovieEntity movieEntity = this.movieMapper.toEntity(movieDto);
+        movieEntity.setEstado("D");
+
+        return this.movieMapper.toDto(this.crudMovieEntity.save(movieEntity));
     }
 }
