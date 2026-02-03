@@ -1,6 +1,7 @@
 package com.platzi.play.web.controller;
 
 import com.platzi.play.domain.dto.MovieDTO;
+import com.platzi.play.domain.dto.UpdateMovieDTO;
 import com.platzi.play.domain.service.MovieService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class MovieController {
     public MovieController(MovieService movieService) {
         this.movieService = movieService;
     }
-
+    // Clase importada ResponseEntity para generar códigos HTTP y personalizar estos mismos.
     // Este método NO necesita ("/..") ya que usa el de @RequestMapping("/movies")
     @GetMapping
     // Devuelve un ResponseEntity, el cual tiene como parámetro una lista de MovieDTO
@@ -26,7 +27,6 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    // Clase importada ResponseEntity para generar códigos HTTP y personalizar estos mismos.
     public ResponseEntity<MovieDTO> getById(@PathVariable long id){
         MovieDTO movieDto = this.movieService.getById(id);
 
@@ -41,5 +41,16 @@ public class MovieController {
     public ResponseEntity<MovieDTO> add(@RequestBody MovieDTO movieDto){
         MovieDTO movieDtoResponse = this.movieService.add(movieDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(movieDtoResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MovieDTO> update(@PathVariable Long id, @RequestBody UpdateMovieDTO updateMovieDto){
+        return ResponseEntity.ok(this.movieService.update(id, updateMovieDto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable Long id){
+        movieService.deleteById(id);
+        return ResponseEntity.ok("La Movie con ID " + id + " ha sido eliminada correctamente");
     }
 }
