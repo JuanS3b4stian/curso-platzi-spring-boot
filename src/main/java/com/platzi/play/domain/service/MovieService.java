@@ -3,6 +3,7 @@ package com.platzi.play.domain.service;
 import com.platzi.play.domain.dto.MovieDTO;
 import com.platzi.play.domain.dto.UpdateMovieDTO;
 import com.platzi.play.domain.repository.MovieRepository;
+import dev.langchain4j.agent.tool.Tool;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,9 @@ public class MovieService {
         this.movieRepository = movieRepository;
     }
 
+    // @Tool normalmente viene en todos los LLMs
+    // Ahora que anotamos con @Tool, LangChain4j sabrá cómo y cuándo usar este método (servicio)
+    @Tool("Busca todas las películas que existan dentro de la plataforma")
     public List<MovieDTO> getAll(){
         return this.movieRepository.getAll();
     }

@@ -1,11 +1,20 @@
 package com.platzi.play.web.controller;
 
 import com.platzi.play.domain.dto.MovieDTO;
+import com.platzi.play.domain.dto.SuggestRequestDTO;
 import com.platzi.play.domain.dto.UpdateMovieDTO;
 import com.platzi.play.domain.service.MovieService;
+import com.platzi.play.domain.service.PlatziPlayAIService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -14,9 +23,11 @@ import java.util.List;
 public class MovieController {
 
     private final MovieService movieService;
+    private final PlatziPlayAIService aiService;
 
-    public MovieController(MovieService movieService) {
+    public MovieController(MovieService movieService, PlatziPlayAIService aiService) {
         this.movieService = movieService;
+        this.aiService = aiService;
     }
     // Clase importada ResponseEntity para generar códigos HTTP y personalizar estos mismos.
     // Este método NO necesita ("/..") ya que usa el de @RequestMapping("/movies")
@@ -43,14 +54,19 @@ public class MovieController {
         return ResponseEntity.status(HttpStatus.CREATED).body(movieDtoResponse);
     }
 
+    @PostMapping("/suggest")
+    public ResponseEntity<String> generateMovieSuggestion(@RequestBody SuggestRequestDTO suggestRequestDto){
+        return ResponseEntity.ok(this.aiService.generateMovieSuggestions(suggestRequestDto.userPreferences()));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<MovieDTO> update(@PathVariable Long id, @RequestBody UpdateMovieDTO updateMovieDto){
         return ResponseEntity.ok(this.movieService.update(id, updateMovieDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable Long id){
-        movieService.deleteById(id);
-        return ResponseEntity.ok("La Movie con ID " + id + " ha sido eliminada correctamente");
+    public ResponseEntity<Void> deleteById(@PathVariable Long id){
+        this.movieService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
