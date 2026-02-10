@@ -1,6 +1,8 @@
 package com.platzi.play.persistence;
 
 import com.platzi.play.domain.dto.UpdateMovieDTO;
+import com.platzi.play.domain.exception.MovieAlreadyExistsException;
+import com.platzi.play.domain.exception.MovieNotExistsException;
 import com.platzi.play.domain.repository.MovieRepository;
 import com.platzi.play.domain.dto.MovieDTO;
 import com.platzi.play.persistence.crud.CrudMovieEntity;
@@ -37,6 +39,10 @@ public class MovieEntityRepository implements MovieRepository {
 
     @Override
     public MovieDTO save(MovieDTO movieDto) {
+        if (this.crudMovieEntity.findFirstByTitulo(movieDto.title()) != null){
+            throw new MovieAlreadyExistsException(movieDto.title());
+        }
+
         MovieEntity movieEntity = this.movieMapper.toEntity(movieDto);
         movieEntity.setEstado("D");
 
@@ -48,7 +54,9 @@ public class MovieEntityRepository implements MovieRepository {
         // Primero busca la movie por su id, comprobando su existencia o no.
         MovieEntity movieEntity = this.crudMovieEntity.findById(id).orElse(null);
 
-        if (movieEntity == null) return null;
+        if (movieEntity == null){
+            throw new MovieNotExistsException(id);
+        }
 
         /* Asignar los nuevos valores a los parámetros con nuestro método updateEntityFromDto
         desde el MovieMapper*/
@@ -64,7 +72,13 @@ public class MovieEntityRepository implements MovieRepository {
     }
 
     @Override
-    public void deleteById(long id) {
-        this.crudMovieEntity.deleteById(id);
+    public MovieDTO deleteById(long id) {
+        MovieEntity movieEntity = this.crudMovieEntity.findById(id).orElse(null);
+        if (movieEntity == null) {
+            throw new MovieNotExistsException(id);
+        }
+        this.crudMovieEntity.delete(movieEntity);
+
+        return this.movieMapper.toDto(movieEntity);
     }
 }

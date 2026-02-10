@@ -19,5 +19,5 @@ public interface PlatziPlayAIService {
             Debes recomendar máximo 3 películas.
             No incluyas películas que estén por fuera de la plataforma PlatziPlay.
             """)
-    String generateMovieSuggestions(@UserMessage String userMessage);
+    String generateMoviesSuggestions(@UserMessage String userMessage);
 }

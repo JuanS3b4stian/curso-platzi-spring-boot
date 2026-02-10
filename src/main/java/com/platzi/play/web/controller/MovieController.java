@@ -55,8 +55,8 @@ public class MovieController {
     }
 
     @PostMapping("/suggest")
-    public ResponseEntity<String> generateMovieSuggestion(@RequestBody SuggestRequestDTO suggestRequestDto){
-        return ResponseEntity.ok(this.aiService.generateMovieSuggestions(suggestRequestDto.userPreferences()));
+    public ResponseEntity<String> generateMoviesSuggestion(@RequestBody SuggestRequestDTO suggestRequestDto) {
+        return ResponseEntity.ok(this.aiService.generateMoviesSuggestions(suggestRequestDto.userPreferences()));
     }
 
     @PutMapping("/{id}")

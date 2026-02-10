@@ -18,7 +18,7 @@ public class MovieService {
 
     // @Tool normalmente viene en todos los LLMs
     // Ahora que anotamos con @Tool, LangChain4j sabrá cómo y cuándo usar este método (servicio)
-    @Tool("Busca todas las películas que existan dentro de la plataforma")
+    @Tool("Busca todas las peliculas que existan dentro de la plataforma")
     public List<MovieDTO> getAll(){
         return this.movieRepository.getAll();
     }
