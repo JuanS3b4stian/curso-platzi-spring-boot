@@ -5,6 +5,7 @@ import com.platzi.play.domain.dto.SuggestRequestDTO;
 import com.platzi.play.domain.dto.UpdateMovieDTO;
 import com.platzi.play.domain.service.MovieService;
 import com.platzi.play.domain.service.PlatziPlayAIService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -59,8 +60,10 @@ public class MovieController {
         return ResponseEntity.ok(this.aiService.generateMoviesSuggestions(suggestRequestDto.userPreferences()));
     }
 
+    // A la hora de actualizar info, aseguremos que no se envíen datos y campos incorrectos
     @PutMapping("/{id}")
-    public ResponseEntity<MovieDTO> update(@PathVariable Long id, @RequestBody UpdateMovieDTO updateMovieDto){
+    // Spring valida el objeto UpdateMovieDTO con @Valid
+    public ResponseEntity<MovieDTO> update(@PathVariable Long id, @RequestBody @Valid UpdateMovieDTO updateMovieDto){
         return ResponseEntity.ok(this.movieService.update(id, updateMovieDto));
     }
 
