@@ -5,6 +5,11 @@ import com.platzi.play.domain.dto.SuggestRequestDTO;
 import com.platzi.play.domain.dto.UpdateMovieDTO;
 import com.platzi.play.domain.service.MovieService;
 import com.platzi.play.domain.service.PlatziPlayAIService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +26,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/movies") // Ahora este será el path predeterminado
+// Título y Descripción en OpenAPI Documentation
+@Tag(name = "Movies", description = "Operaciones acerca de las películas de PlatziPlay")
 public class MovieController {
 
     private final MovieService movieService;
@@ -39,7 +46,18 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MovieDTO> getById(@PathVariable long id){
+    // Explicamos a través de @ApiResponse los códigos y significados dentro de la operación lanzada
+    @Operation(
+            summary = "Obtener una película por su Identificador",
+            description = "Retorna la película que coincida con el ID que el usuario envía",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Película encontrada"),
+                    @ApiResponse(responseCode = "404", description = "Película no encontrada", content = @Content)
+            }
+    )
+    public ResponseEntity<MovieDTO> getById(
+            @Parameter(description = "Identificador de la película a recuperar", example = "9")
+            @PathVariable long id){
         MovieDTO movieDto = this.movieService.getById(id);
 
         if (movieDto == null){
